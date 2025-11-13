@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Магазин</title>
+</head>
+<body>
+<h1>Товары</h1>
+<a href="/add">Добавить позицию</a>
+<ul>
+  {% for position in positions %}
+    <li><b>{{ position[1] }}</b> — {{ position[2] }} ₽<br> {{ position[3] }}</li>
+    {% else %}
+    <li>Будте первым кто добавит позицию!</li>
+    {% endfor %}
+</ul>
+</body>
+</html>
