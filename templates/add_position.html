@@ -1,0 +1,20 @@
+
+{% extends 'base.html' %}
+{% block content %}
+<h2>Добавить новый товар</h2>
+<form method="post" action="{{ url_for('add_position') }}" enctype="multipart/form-data">
+  <label for="name">Название</label>
+  <input type="text" id="name" name="name" required autofocus>
+
+  <label for="price">Цена (₽)</label>
+  <input type="text" id="price" name="price" required>
+
+  <label for="description">Описание</label>
+  <textarea id="description" name="description" rows="4"></textarea>
+
+  <label for="image">Изображение (png, jpg, jpeg, gif)</label>
+  <input type="file" id="image" name="image" accept="image/*">
+
+  <input type="submit" value="Добавить товар">
+</form>
+{% endblock %}
