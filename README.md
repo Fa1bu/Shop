@@ -11,7 +11,7 @@
 4. Добавление товара <br>
 <br> <div align="center"> <img width="1920" height="793" alt="image" src="https://github.com/user-attachments/assets/9681fcdd-2dd5-4b3d-823c-49b8e59317f9" /> </div> <br>
 5. Добавление товаров в корзину <br>
-<br> <div align="center"> <img width="1355" height="690" alt="image" src="https://github.com/user-attachments/assets/264e1deb-1527-4cc8-84d5-b9f373f10033" /> </div> <br>
+<br> <div align="center"> <img width="1354" height="699" alt="image" src="https://github.com/user-attachments/assets/e9c43b4b-c81f-4e60-b4b2-4c527197e5bc" /> </div> <br>
 
 ### Что необходимо для работы: 
 1. Установить Python https://www.python.org/downloads/
