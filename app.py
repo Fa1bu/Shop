@@ -8,7 +8,7 @@ DATABASE = 'shop.db'
 
 # База данных
 def init_db():
-    conn = get_db()
+    conn = sqlite3.connect(DATABASE)
     c = conn.cursor()
     c.execute('''
         CREATE TABLE IF NOT EXISTS positions (
