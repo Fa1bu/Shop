@@ -3,13 +3,15 @@
 
 ### Функционал
 1. Авторизация в программе <br>
-<br> <div align="center"> --каринка-- </div> <br>
+<br> <div align="center"> <img width="1920" height="575" alt="image" src="https://github.com/user-attachments/assets/fd67648e-b462-4d5c-8732-4ea3ad120871" /> </div> <br>
 2. Регистраци в программе <br>
-<br> <div align="center"> --каринка-- </div> <br>
-3. Добавление позиций <br>
-<br> <div align="center"> --каринка-- </div> <br>
-4. Сохранение позиций <br>
-<br> <div align="center"> --каринка-- </div> <br>
+<br> <div align="center"> <img width="1920" height="561" alt="image" src="https://github.com/user-attachments/assets/470ca9e8-1ac5-468e-a03c-be04af39d8a5" /> </div> <br>
+3. Просмотр католога товаров <br>
+<br> <div align="center"> <img width="1920" height="522" alt="image" src="https://github.com/user-attachments/assets/73da1ecb-a21f-4f83-a598-b867a3761bf3" /> </div> <br>
+4. Добавление товара <br>
+<br> <div align="center"> <img width="1920" height="793" alt="image" src="https://github.com/user-attachments/assets/9681fcdd-2dd5-4b3d-823c-49b8e59317f9" /> </div> <br>
+5. Добавление товаров в корзину <br>
+<br> <div align="center"> <img width="1355" height="690" alt="image" src="https://github.com/user-attachments/assets/264e1deb-1527-4cc8-84d5-b9f373f10033" /> </div> <br>
 
 ### Что необходимо для работы: 
 1. Установить Python https://www.python.org/downloads/
