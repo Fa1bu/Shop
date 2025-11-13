@@ -1,0 +1,49 @@
+
+{% extends 'base.html' %}
+{% block content %}
+<h2>Ваша корзина</h2>
+{% if items %}
+<table>
+  <thead>
+  <tr>
+    <th>Изображение</th>
+    <th>Название</th>
+    <th>Цена (₽)</th>
+    <th>Количество</th>
+    <th>Итого</th>
+    <th>Действие</th>
+  </tr>
+  </thead>
+  <tbody>
+  {% for item in items %}
+  <tr>
+    <td>
+      {% if item['image'] %}
+      <img src="{{ url_for('static', filename='uploads/' ~ item['image']) }}" alt="{{ item['name'] }}" style="max-height:50px; max-width:70px;">
+      {% else %}
+      -
+      {% endif %}
+    </td>
+    <td>{{ item['name'] }}</td>
+    <td>{{ "%.2f"|format(item['price']) }}</td>
+    <td>{{ item['quantity'] }}</td>
+    <td>{{ "%.2f"|format(item['price'] * item['quantity']) }}</td>
+    <td>
+      <form action="{{ url_for('remove_from_cart', cart_id=item['cart_id']) }}" method="post">
+        <button type="submit" style="background:#dc3545;">Удалить</button>
+      </form>
+    </td>
+  </tr>
+  {% endfor %}
+  </tbody>
+  <tfoot>
+    <tr>
+      <th colspan="4" style="text-align:right">Общая сумма:</th>
+      <th colspan="2">{{ "%.2f"|format(total) }} ₽</th>
+    </tr>
+  </tfoot>
+</table>
+{% else %}
+<p>Ваша корзина пуста.</p>
+{% endif %}
+{% endblock %}
