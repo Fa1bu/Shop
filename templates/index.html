@@ -1,18 +1,45 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Магазин</title>
-</head>
-<body>
-<h1>Товары</h1>
-<a href="/add">Добавить позицию</a>
-<ul>
-  {% for position in positions %}
-    <li><b>{{ position[1] }}</b> — {{ position[2] }} ₽<br> {{ position[3] }}</li>
-    {% else %}
-    <li>Будте первым кто добавит позицию!</li>
-    {% endfor %}
-</ul>
-</body>
-</html>
+
+{% extends 'base.html' %}
+{% block content %}
+<h2>Каталог товаров</h2>
+{% if positions %}
+<table>
+  <thead>
+  <tr>
+    <th>Изображение</th>
+    <th>Название</th>
+    <th>Цена (₽)</th>
+    <th>Описание</th>
+    <th>Действие</th>
+  </tr>
+  </thead>
+  <tbody>
+  {% for p in positions %}
+  <tr>
+    <td>
+      {% if p['image'] %}
+        <img src="{{ url_for('static', filename='uploads/' ~ p['image']) }}" alt="{{ p['name'] }}" style="max-height:60px; max-width:80px;">
+      {% else %}
+        -
+      {% endif %}
+    </td>
+    <td>{{ p['name'] }}</td>
+    <td>{{ "%.2f"|format(p['price']) }}</td>
+    <td>{{ p['description']|default('-') }}</td>
+    <td>
+      {% if session.get('user_id') %}
+      <form action="{{ url_for('add_to_cart', position_id=p['id']) }}" method="post">
+        <input type="submit" value="В корзину">
+      </form>
+      {% else %}
+      <em>Войдите чтобы купить</em>
+      {% endif %}
+    </td>
+  </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p>Товары отсутствуют.</p>
+{% endif %}
+{% endblock %}
