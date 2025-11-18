@@ -1,53 +1,33 @@
-# Интернет-магазин на Flask
+# Интернет-магазин
 
 Полнофункциональный интернет-магазин на Flask без использования JavaScript. Все функции работают через серверный рендеринг и формы.
 
 ## Возможности
 
-- ✅ Регистрация и авторизация пользователей
-- ✅ Каталог товаров с поиском и фильтрацией по категориям
-- ✅ Карточки товаров с детальной информацией
-- ✅ Корзина покупок (добавление, изменение количества, удаление)
-- ✅ Избранное (добавление/удаление товаров)
-- ✅ Отзывы на товары с оценками
-- ✅ Оформление заказа
-- ✅ Адаптивный дизайн
+- Регистрация пользователей
+<br> <div align="center"> <img width="1920" height="877" alt="image" src="https://github.com/user-attachments/assets/a8d725c1-7e7f-4795-a936-0418784d0175" /> </div> <br>
+- Авторизация пользователей
+<br> <div align="center"> <img width="1920" height="876" alt="image" src="https://github.com/user-attachments/assets/aaf688b5-635d-4ecd-a192-19c4497b3d44" /> </div> <br>
+- Каталог товаров с поиском и фильтрацией по категориям
+<br> <div align="center"> <img width="1920" height="876" alt="image" src="https://github.com/user-attachments/assets/20b98d6e-9294-4580-93b7-aff1373fb8f5" /> </div> <br>
+- Карточки товаров с детальной информацией
+<br> <div align="center"> <img width="1920" height="873" alt="image" src="https://github.com/user-attachments/assets/81a95493-e39e-4be4-b7b9-f2706afd96d8" /> </div> <br>
+- Корзина покупок
+<br> <div align="center"> <img width="1920" height="874" alt="image" src="https://github.com/user-attachments/assets/5a6d2062-4dfd-41a3-9ecd-6165baa8e786" /> </div> <br>
+- Избранное
+<br> <div align="center"> <img width="1920" height="873" alt="image" src="https://github.com/user-attachments/assets/d724da63-1c2f-4d84-95cb-d0184018bb36" /> </div> <br>
+- Отзывы на товары с оценками
+<br> <div align="center"> <img width="1920" height="875" alt="image" src="https://github.com/user-attachments/assets/b9b06178-c990-4932-a777-c10bf25a665c" /> </div> <br>
+- Оформление заказа
+<br> <div align="center"> <img width="1920" height="869" alt="image" src="https://github.com/user-attachments/assets/efa93dcc-51ef-469c-9cb5-24922379f13c" /> </div> <br>
+- Добавление банера
+<br> <div align="center"> <img width="1920" height="867" alt="image" src="https://github.com/user-attachments/assets/4e81ad17-ac68-4a3d-ad37-cc25c9adb9af" /> </div> <br>
 
 ## Установка
 
-1. Установите зависимости:
-```bash
-pip install -r requirements.txt
-```
-
-2. Запустите приложение:
-```bash
-python app.py
-```
-
-3. Откройте браузер и перейдите по адресу:
-```
-http://localhost:5000
-```
-
-## Структура проекта
-
-```
-flask-store/
-├── app.py              # Основной файл Flask приложения
-├── requirements.txt    # Зависимости проекта
-├── store.db           # База данных SQLite (создается автоматически)
-├── templates/         # HTML шаблоны
-│   ├── base.html
-│   ├── index.html
-│   ├── product.html
-│   ├── cart.html
-│   ├── favorites.html
-│   ├── login.html
-│   └── register.html
-└── static/            # Статические файлы
-    └── style.css
-```
+1. Установите ```pip install -r requirements.txt```
+2. Запустите ```app.py```
+3. Откройте браузер и перейдите по адресу
 
 ## Использование
 
@@ -112,4 +92,5 @@ flask-store/
   - Реализовать систему платежей
   - Добавить админ-панель
   - Настроить логирование
+
 
