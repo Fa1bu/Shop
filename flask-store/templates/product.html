@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+
+{% block title %}{{ product.name }} - Интернет-магазин{% endblock %}
+
+{% block content %}
+<div class="container">
+    <a href="{{ url_for('index') }}" class="back-link">← Назад к каталогу</a>
+    
+    <div class="product-details">
+        <div class="product-details-content">
+            <img src="{{ product.image }}" alt="{{ product.name }}" class="product-details-image">
+            <div class="product-details-info">
+                <h2>{{ product.name }}</h2>
+                <div class="product-details-price">{{ "%.2f"|format(product.price) }} ₽</div>
+                <p class="product-details-description">{{ product.description }}</p>
+                <p><strong>Категория:</strong> {{ product.category }}</p>
+                <p><strong>В наличии:</strong> {{ product.stock }} шт.</p>
+                
+                {% if product.specifications %}
+                <div class="product-specifications" style="margin-top: 1.5rem;">
+                    <h3 style="margin-bottom: 1rem; font-size: 1.2rem;">Характеристики</h3>
+                    <div class="specifications-list" style="background: #f8f9fa; padding: 1rem; border-radius: 8px;">
+                        {% for line in product.specifications.split('\n') %}
+                            {% if line.strip() %}
+                                {% set parts = line.split(':', 1) %}
+                                {% if parts|length == 2 %}
+                                    <div style="display: flex; padding: 0.5rem 0; border-bottom: 1px solid #e0e0e0;">
+                                        <div style="font-weight: 600; min-width: 150px; color: #333;">{{ parts[0].strip() }}:</div>
+                                        <div style="color: #666;">{{ parts[1].strip() }}</div>
+                                    </div>
+                                {% else %}
+                                    <div style="padding: 0.5rem 0; color: #666;">{{ line.strip() }}</div>
+                                {% endif %}
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+                
+                {% if product.creator_username %}
+                {% endif %}
+                
+                <div class="product-actions">
+                    <form method="POST" action="{{ url_for('add_to_cart') }}" style="display: inline;">
+                        <input type="hidden" name="product_id" value="{{ product.id }}">
+                        <input type="hidden" name="quantity" value="1">
+                        <button type="submit" class="btn btn-primary">Добавить в корзину</button>
+                    </form>
+                    
+                    {% if in_favorites %}
+                        <form method="POST" action="{{ url_for('remove_from_favorites') }}" style="display: inline;">
+                            <input type="hidden" name="product_id" value="{{ product.id }}">
+                            <button type="submit" class="btn btn-outline">Удалить из избранного</button>
+                        </form>
+                    {% else %}
+                        <form method="POST" action="{{ url_for('add_to_favorites') }}" style="display: inline;">
+                            <input type="hidden" name="product_id" value="{{ product.id }}">
+                            <button type="submit" class="btn btn-outline">Добавить в избранное</button>
+                        </form>
+                    {% endif %}
+                </div>
+                
+                {% if session.user_id and product.created_by_user_id == session.user_id %}
+                    <div style="margin-top: 1rem;">
+                        <a href="{{ url_for('edit_product', product_id=product.id) }}" class="btn btn-outline">Редактировать товар</a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="reviews-section">
+        <h3>Отзывы ({{ reviews|length }})</h3>
+        
+        {% if session.user_id %}
+            <div class="review-form">
+                <h4>Оставить отзыв</h4>
+                <form method="POST" action="{{ url_for('add_review', product_id=product.id) }}">
+                    <div class="form-group">
+                        <label>Оценка:</label>
+                        <select name="rating" required class="form-control">
+                            <option value="">Выберите оценку</option>
+                            <option value="5">5 - Отлично</option>
+                            <option value="4">4 - Хорошо</option>
+                            <option value="3">3 - Удовлетворительно</option>
+                            <option value="2">2 - Плохо</option>
+                            <option value="1">1 - Очень плохо</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Комментарий:</label>
+                        <textarea name="comment" class="form-control" rows="4" placeholder="Ваш отзыв..."></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Отправить отзыв</button>
+                </form>
+            </div>
+        {% else %}
+            <p><a href="{{ url_for('login') }}">Войдите</a>, чтобы оставить отзыв</p>
+        {% endif %}
+
+        <div class="reviews-list">
+            {% if reviews %}
+                {% for review in reviews %}
+                    <div class="review-item">
+                        <div class="review-header">
+                            <div>
+                                <strong>{{ review.username }}</strong>
+                                <span class="review-rating">
+                                    {% for i in range(review.rating) %}⭐{% endfor %}
+                                </span>
+                            </div>
+                            <div>
+                                <span class="review-date">{{ review.created_at }}</span>
+                                {% if session.user_id == review.user_id %}
+                                    <form method="POST" action="{{ url_for('delete_review', review_id=review.id) }}" style="display: inline;">
+                                        <button type="submit" class="btn btn-small" onclick="return confirm('Удалить отзыв?')">Удалить</button>
+                                    </form>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% if review.comment %}
+                            <p class="review-comment">{{ review.comment }}</p>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p>Пока нет отзывов. Будьте первым!</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+

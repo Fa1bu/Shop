@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block title %}Оформление заказа - Интернет-магазин{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>Оформление заказа</h2>
+    
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 2rem;">
+        <!-- Форма оформления -->
+        <div>
+            <h3>Данные для доставки</h3>
+            <div class="product-form-card" style="margin-top: 1rem;">
+                <form method="POST" action="{{ url_for('checkout') }}">
+                    <div class="form-group">
+                        <label>ФИО *</label>
+                        <input type="text" name="customer_name" class="form-control" required 
+                               value="{{ request.form.customer_name or session.username or '' }}" 
+                               placeholder="Иванов Иван Иванович">
+                    </div>
+                    <div class="form-group">
+                        <label>Телефон *</label>
+                        <input type="tel" name="customer_phone" class="form-control" required 
+                               value="{{ request.form.customer_phone or '' }}" 
+                               placeholder="+7 (999) 123-45-67">
+                    </div>
+                    <div class="form-group">
+                        <label>Адрес доставки *</label>
+                        <textarea name="delivery_address" class="form-control" rows="3" required 
+                                  placeholder="Город, улица, дом, квартира">{{ request.form.delivery_address or '' }}</textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Комментарий к заказу</label>
+                        <textarea name="comment" class="form-control" rows="3" 
+                                  placeholder="Дополнительная информация для курьера">{{ request.form.comment or '' }}</textarea>
+                    </div>
+                    <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+                        <button type="submit" class="btn btn-primary btn-large">Подтвердить заказ</button>
+                        <a href="{{ url_for('cart') }}" class="btn btn-outline btn-large">Вернуться в корзину</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Сводка заказа -->
+        <div>
+            <h3>Ваш заказ</h3>
+            <div class="cart-items" style="margin-top: 1rem;">
+                {% for item in cart_items %}
+                    <div class="cart-item" style="margin-bottom: 1rem; padding: 1rem; background: #f8f9fa; border-radius: 8px;">
+                        <div style="display: flex; gap: 1rem;">
+                            <img src="{{ item.image }}" alt="{{ item.name }}" 
+                                 style="width: 80px; height: 80px; object-fit: cover; border-radius: 5px;">
+                            <div style="flex: 1;">
+                                <h4 style="margin: 0 0 0.5rem 0;">{{ item.name }}</h4>
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <span style="color: #666;">Количество: {{ item.quantity }}</span>
+                                    <span style="font-weight: 600; color: #667eea;">
+                                        {{ "%.2f"|format(item.price * item.quantity) }} ₽
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            
+            <div class="cart-summary" style="margin-top: 1.5rem; padding: 1.5rem; background: #f8f9fa; border-radius: 8px;">
+                <div class="summary-row" style="display: flex; justify-content: space-between; font-size: 1.2rem; font-weight: 600; padding: 1rem 0; border-top: 2px solid #ddd;">
+                    <span>Итого:</span>
+                    <span class="summary-total" style="color: #667eea;">{{ "%.2f"|format(total) }} ₽</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
