@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+
+{% block title %}Управление пользователями - Интернет-магазин{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>Администрирование пользователей</h2>
+
+    <div class="account-grid" style="margin-top: 2rem;">
+        <div class="account-card">
+            <h3>Заявки на продавца</h3>
+            {% if pending_requests %}
+                <div class="table-list">
+                    {% for user in pending_requests %}
+                        <div class="table-row">
+                            <div>
+                                <strong>{{ user.username }}</strong><br>
+                                <span class="text-muted">{{ user.email }}</span>
+                            </div>
+                            <div class="table-actions">
+                                <form method="POST" action="{{ url_for('approve_seller', user_id=user.id) }}" style="display:inline;">
+                                    <button type="submit" class="btn btn-primary btn-small">Одобрить</button>
+                                </form>
+                                <form method="POST" action="{{ url_for('reject_seller', user_id=user.id) }}" style="display:inline;" onsubmit="return confirm('Отклонить заявку?');">
+                                    <button type="submit" class="btn btn-outline btn-small">Отклонить</button>
+                                </form>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p>Нет заявок, ожидающих подтверждения.</p>
+            {% endif %}
+        </div>
+
+        <div class="account-card">
+            <h3>Текущие продавцы</h3>
+            {% if sellers %}
+                <div class="table-list">
+                    {% for seller in sellers %}
+                        <div class="table-row">
+                            <div>
+                                <strong>{{ seller.username }}</strong><br>
+                                <span class="text-muted">{{ seller.email }}</span>
+                            </div>
+                            <div class="table-actions">
+                                <form method="POST" action="{{ url_for('delete_seller', user_id=seller.id) }}" style="display:inline;" onsubmit="return confirm('Удалить продавца? Роль будет изменена на покупатель.');">
+                                    <button type="submit" class="btn btn-outline btn-small">Удалить</button>
+                                </form>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p>Пока нет активных продавцов.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="account-card" style="margin-top: 2rem;">
+        <h3>Администраторы</h3>
+        {% if admins %}
+            <div class="table-list">
+                {% for admin in admins %}
+                    <div class="table-row">
+                        <div>
+                            <strong>{{ admin.username }}</strong><br>
+                            <span class="text-muted">{{ admin.email }}</span>
+                        </div>
+                        <span class="badge badge-success">Администратор</span>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p>Администраторы не назначены.</p>
+        {% endif %}
+
+        <div class="admin-actions" style="margin-top: 1.5rem; display: grid; gap: 1.5rem;">
+            <div class="product-form-card">
+                <h4>Добавить нового администратора</h4>
+                <form method="POST" action="{{ url_for('create_admin_user') }}">
+                    <div class="form-group">
+                        <label for="new-admin-username">Имя пользователя *</label>
+                        <input type="text" id="new-admin-username" name="username" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="new-admin-email">Email *</label>
+                        <input type="email" id="new-admin-email" name="email" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="new-admin-password">Пароль *</label>
+                        <input type="password" id="new-admin-password" name="password" class="form-control" required minlength="6">
+                    </div>
+                    <div class="form-group">
+                        <label for="new-admin-confirm">Повторите пароль *</label>
+                        <input type="password" id="new-admin-confirm" name="confirm_password" class="form-control" required minlength="6">
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-small">Создать администратора</button>
+                </form>
+            </div>
+
+            {% if potential_admins %}
+            <div class="product-form-card">
+                <h4>Повысить существующего пользователя</h4>
+                <form method="POST" action="{{ url_for('promote_user_to_admin') }}">
+                    <div class="form-group">
+                        <label for="promote-admin-select">Выберите пользователя *</label>
+                        <select id="promote-admin-select" name="user_id" class="form-control" required>
+                            {% for user in potential_admins %}
+                                <option value="{{ user.id }}">{{ user.username }} ({{ user.email }})</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-small">Повысить до администратора</button>
+                </form>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+

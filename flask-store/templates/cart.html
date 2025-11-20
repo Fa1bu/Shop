@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+
+{% block title %}Корзина - Интернет-магазин{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>Корзина покупок</h2>
+    
+    {% if cart_items %}
+        <div class="cart-items">
+            {% for item in cart_items %}
+                <div class="cart-item">
+                    {% if session.user_id %}
+                    <div class="cart-item-select">
+                        <input type="checkbox" class="cart-select-checkbox" data-cart-id="{{ item.cart_id }}">
+                    </div>
+                    {% endif %}
+                    <img src="{{ image_url(item.image) }}" alt="{{ item.name }}" class="cart-item-image">
+                    <div class="cart-item-info">
+                        <h3><a href="{{ url_for('product', product_id=item.product_id) }}">{{ item.name }}</a></h3>
+                        <div class="cart-item-price">{{ "%.2f"|format(item.price) }} ₽</div>
+                    </div>
+                    <div class="cart-item-quantity">
+                        <form method="POST" action="{{ url_for('update_cart') }}" style="display: inline;">
+                            <input type="hidden" name="cart_id" value="{{ item.cart_id or '' }}">
+                            <input type="hidden" name="product_id" value="{{ item.product_id }}">
+                            <input type="number" name="quantity" value="{{ item.quantity }}" min="1" class="quantity-input">
+                            <button type="submit" class="btn btn-small">Обновить</button>
+                        </form>
+                    </div>
+                    <form method="POST" action="{{ url_for('remove_from_cart') }}" style="display: inline;">
+                        <input type="hidden" name="cart_id" value="{{ item.cart_id or '' }}">
+                        <input type="hidden" name="product_id" value="{{ item.product_id }}">
+                        <button type="submit" class="btn btn-outline">Удалить</button>
+                    </form>
+                </div>
+            {% endfor %}
+        </div>
+
+        <div class="cart-summary">
+            <div class="summary-row">
+                <span>Итого:</span>
+                <span class="summary-total">{{ "%.2f"|format(total) }} ₽</span>
+            </div>
+            {% if session.user_id %}
+                <div class="cart-selection-actions">
+                    <label class="select-all">
+                        <input type="checkbox" id="cart-select-all">
+                        Выбрать все
+                    </label>
+                    <form id="checkout-selection-form" method="GET" action="{{ url_for('checkout') }}">
+                        <button type="submit" class="btn btn-primary btn-large" id="checkout-selected-btn" disabled>Оформить выбранные</button>
+                    </form>
+                </div>
+            {% else %}
+                <p>Войдите в аккаунт, чтобы оформить заказ.</p>
+                <a href="{{ url_for('login') }}" class="btn btn-primary btn-large">Войти</a>
+            {% endif %}
+        </div>
+    {% else %}
+        <div class="empty-state">
+            <p>Ваша корзина пуста</p>
+            <a href="{{ url_for('index') }}" class="btn btn-primary">Перейти к покупкам</a>
+        </div>
+    {% endif %}
+</div>
+{% if session.user_id and cart_items %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var checkboxes = Array.from(document.querySelectorAll('.cart-select-checkbox'));
+    var selectAll = document.getElementById('cart-select-all');
+    var form = document.getElementById('checkout-selection-form');
+    var submitBtn = document.getElementById('checkout-selected-btn');
+
+    if (!form || !submitBtn) { return; }
+
+    function updateState() {
+        var selected = checkboxes.filter(function(box) { return box.checked; }).map(function(box) { return box.getAttribute('data-cart-id'); });
+        submitBtn.disabled = selected.length === 0;
+        if (selectAll) {
+            selectAll.checked = selected.length === checkboxes.length;
+        }
+        form.querySelectorAll('input[name="items"]').forEach(function(node) { node.remove(); });
+        selected.forEach(function(id) {
+            if (!id) { return; }
+            var hidden = document.createElement('input');
+            hidden.type = 'hidden';
+            hidden.name = 'items';
+            hidden.value = id;
+            form.appendChild(hidden);
+        });
+    }
+
+    checkboxes.forEach(function(box) {
+        box.addEventListener('change', updateState);
+        box.checked = true;
+    });
+    if (selectAll) {
+        selectAll.addEventListener('change', function(event) {
+            checkboxes.forEach(function(box) { box.checked = event.target.checked; });
+            updateState();
+        });
+    }
+    updateState();
+});
+</script>
+{% endif %}
+{% endblock %}
+

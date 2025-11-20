@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block title %}Мои заказы - Интернет-магазин{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>Мои заказы</h2>
+    
+    {% if orders %}
+        <div class="orders-list">
+            {% for order in orders %}
+                <div class="order-card">
+                    <div class="order-header">
+                        <div class="order-info">
+                            <h3>Заказ #{{ order.id }}</h3>
+                            <p class="order-detail"><strong>Дата:</strong> {{ order.created_at }}</p>
+                            <p class="order-detail"><strong>Получатель:</strong> {{ order.customer_name }}</p>
+                            <p class="order-detail"><strong>Адрес:</strong> {{ order.delivery_address }}</p>
+                            <p class="order-detail"><strong>Телефон:</strong> {{ order.customer_phone }}</p>
+                        </div>
+                        <div class="order-summary">
+                            <p class="order-total">{{ "%.2f"|format(order.total_amount) }} ₽</p>
+                            <span class="badge badge-{{ order.status }}">
+                                {{ order.status_label or order.status }}
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <div class="order-items-section">
+                        <h5>Товары ({{ order['items']|length }}):</h5>
+                        <div class="order-items-list">
+                            {% for item in order['items'] %}
+                                <div class="order-item">
+                                    <div class="order-item-info">
+                                        {% if item.image %}
+                                            <img src="{{ image_url(item.image) }}" alt="{{ item.product_name }}" class="order-item-image">
+                                        {% endif %}
+                                        <div>
+                                            <strong>{{ item.product_name }}</strong><br>
+                                            <span class="order-item-details">
+                                                {{ "%.2f"|format(item.price) }} ₽ × {{ item.quantity }} шт.
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="order-item-price">
+                                        {{ "%.2f"|format(item.price * item.quantity) }} ₽
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    
+                    <div class="order-actions">
+                        <a href="{{ url_for('order_confirmation', order_id=order.id) }}" class="btn btn-outline btn-small">Подробнее</a>
+                        {% if order.status != 'cancelled' and order.status != 'completed' %}
+                            <form method="POST" action="{{ url_for('cancel_order', order_id=order.id) }}" class="inline-form" onsubmit="return confirm('Вы уверены, что хотите отменить заказ?');">
+                                <button type="submit" class="btn btn-danger btn-small">Отменить заказ</button>
+                            </form>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty-state">
+            <p>У вас пока нет заказов</p>
+            <a href="{{ url_for('index') }}" class="btn btn-primary">Перейти в каталог</a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
+

@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block title %}Баннеры - Интернет-магазин{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>Управление баннерами</h2>
+
+    <div class="banner-form">
+        <h3>Добавить баннер</h3>
+        <a href="{{ url_for('edit_banner', banner_id=0) }}" class="btn btn-primary" style="margin-bottom: 1rem;">Добавить новый баннер</a>
+    </div>
+
+    <div class="banner-list">
+        <h3>Список баннеров</h3>
+        {% if banners %}
+            <div class="banner-cards">
+                {% for banner in banners %}
+                    <div class="banner-card">
+                        <img src="{{ image_url(banner.image_url) }}" alt="{{ banner.title }}">
+                        <div class="banner-card-content">
+                            <h4>{{ banner.title }}</h4>
+                            {% if banner.link_url %}
+                                <p><strong>Ссылка:</strong> <a href="{{ banner.link_url }}" target="_blank">{{ banner.link_url }}</a></p>
+                            {% endif %}
+                            <p><strong>Статус:</strong> {{ 'Активен' if banner.is_active else 'Отключен' }}</p>
+                            {% if session.user_id and (banner.created_by_user_id is none or banner.created_by_user_id == session.user_id) %}
+                            <div class="banner-card-actions">
+                                <a href="{{ url_for('edit_banner', banner_id=banner.id) }}" class="btn btn-small">Редактировать</a>
+                                <form method="POST" action="{{ url_for('toggle_banner', banner_id=banner.id) }}" style="display: inline;">
+                                    <button type="submit" class="btn btn-small">{{ 'Отключить' if banner.is_active else 'Включить' }}</button>
+                                </form>
+                                <form method="POST" action="{{ url_for('delete_banner', banner_id=banner.id) }}" onsubmit="return confirm('Удалить баннер?');" style="display: inline;">
+                                    <button type="submit" class="btn btn-outline btn-small">Удалить</button>
+                                </form>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p>Баннеров пока нет.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+
