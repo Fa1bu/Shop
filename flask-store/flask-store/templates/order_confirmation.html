@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block title %}Заказ #{{ order.id }} - Интернет-магазин{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div style="max-width: 800px; margin: 0 auto;">
+        <div style="text-align: center; margin-bottom: 2rem;">
+            <h2 style="color: #667eea;">✓ Заказ успешно оформлен!</h2>
+            <p style="font-size: 1.1rem; color: #666;">Номер заказа: <strong>#{{ order.id }}</strong></p>
+        </div>
+        
+        <div class="product-form-card" style="margin-bottom: 2rem;">
+            <h3>Информация о заказе</h3>
+            <div style="margin-top: 1rem;">
+                <p><strong>Дата заказа:</strong> {{ order.created_at }}</p>
+                <p><strong>Статус:</strong> 
+                    <span style="padding: 0.25rem 0.75rem; background: #667eea; color: white; border-radius: 5px; font-size: 0.9rem;">
+                        {% if order.status == 'pending' %}В обработке{% elif order.status == 'completed' %}Выполнен{% else %}{{ order.status }}{% endif %}
+                    </span>
+                </p>
+                <p><strong>Сумма заказа:</strong> <span style="font-size: 1.2rem; font-weight: 600; color: #667eea;">{{ "%.2f"|format(order.total_amount) }} ₽</span></p>
+            </div>
+        </div>
+        
+        <div class="product-form-card" style="margin-bottom: 2rem;">
+            <h3>Данные получателя</h3>
+            <div style="margin-top: 1rem;">
+                <p><strong>ФИО:</strong> {{ order.customer_name }}</p>
+                <p><strong>Телефон:</strong> {{ order.customer_phone }}</p>
+                <p><strong>Адрес доставки:</strong> {{ order.delivery_address }}</p>
+                {% if order.comment %}
+                <p><strong>Комментарий:</strong> {{ order.comment }}</p>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="product-form-card">
+            <h3>Состав заказа</h3>
+            <div style="margin-top: 1rem;">
+                {% for item in order_items %}
+                    <div style="display: flex; justify-content: space-between; padding: 1rem 0; border-bottom: 1px solid #e0e0e0;">
+                        <div>
+                            <strong>{{ item.product_name }}</strong>
+                            <div style="color: #666; font-size: 0.9rem;">Количество: {{ item.quantity }} × {{ "%.2f"|format(item.price) }} ₽</div>
+                        </div>
+                        <div style="font-weight: 600; color: #667eea;">
+                            {{ "%.2f"|format(item.price * item.quantity) }} ₽
+                        </div>
+                    </div>
+                {% endfor %}
+                <div style="display: flex; justify-content: space-between; margin-top: 1rem; padding-top: 1rem; border-top: 2px solid #ddd; font-size: 1.2rem; font-weight: 600;">
+                    <span>Итого:</span>
+                    <span style="color: #667eea;">{{ "%.2f"|format(order.total_amount) }} ₽</span>
+                </div>
+            </div>
+        </div>
+        
+        <div style="text-align: center; margin-top: 2rem;">
+            <a href="{{ url_for('index') }}" class="btn btn-primary btn-large">Вернуться в каталог</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

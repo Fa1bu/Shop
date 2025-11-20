@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Интернет-магазин{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <h1 class="logo">🛍️ Интернет-магазин</h1>
+            <div class="nav-links">
+                <a href="{{ url_for('index') }}" class="nav-link">Главная</a>
+                <a href="{{ url_for('cart') }}" class="nav-link">Корзина</a>
+                <a href="{{ url_for('favorites') }}" class="nav-link">Избранное</a>
+                {% if session.user_id %}
+                    {% set current_role = session.get('role') %}
+                    <a href="{{ url_for('account') }}" class="nav-link">Аккаунт</a>
+                    {% if current_role in ['seller', 'admin'] %}
+                        <a href="{{ url_for('add_product') }}" class="nav-link">Добавить товар</a>
+                    {% endif %}
+                    {% if current_role == 'admin' %}
+                        <a href="{{ url_for('manage_banners') }}" class="nav-link">Баннеры</a>
+                        <a href="{{ url_for('admin_users') }}" class="nav-link">Админ</a>
+                    {% endif %}
+                    <span class="user-info">{{ session.username }}</span>
+                    <a href="{{ url_for('logout') }}" class="nav-link">Выход</a>
+                {% else %}
+                    <a href="{{ url_for('login') }}" class="nav-link">Вход</a>
+                    <a href="{{ url_for('register') }}" class="nav-link">Регистрация</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-messages">
+                    {% for category, message in messages %}
+                        <div class="flash flash-{{ category }}">{{ message }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="footer">
+        <p>&copy; 2025 Интернет-магазин. Все права защищены.</p>
+    </footer>
+</body>
+</html>
+

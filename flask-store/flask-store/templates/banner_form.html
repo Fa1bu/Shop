@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block title %}{{ 'Редактирование баннера' if is_edit else 'Добавление баннера' }} - Интернет-магазин{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>{{ 'Редактировать баннер' if is_edit else 'Добавить баннер' }}</h2>
+    <div class="banner-form">
+        <form method="POST" enctype="multipart/form-data" action="{{ url_for('edit_banner', banner_id=banner.id if banner else 0) }}">
+            <div class="form-group">
+                <label>Заголовок</label>
+                <input type="text" name="title" class="form-control" required value="{{ banner.title if banner else '' }}">
+            </div>
+            <div class="form-group">
+                <label>Изображение баннера {% if not banner %}*{% endif %}</label>
+                <input type="file" name="image_file" class="form-control" accept="image/*" {% if not banner %}required{% endif %}>
+                <small style="color: #666; display: block; margin-top: 0.5rem;">Форматы: PNG, JPG, JPEG, GIF, WEBP</small>
+                {% if banner %}
+                    <div class="banner-preview">
+                        <img src="{{ image_url(banner.image_url) }}" alt="{{ banner.title }}">
+                    </div>
+                {% endif %}
+            </div>
+            <div class="form-group">
+                <label>Ссылка при клике (необязательно)</label>
+                <input type="url" name="link_url" class="form-control" placeholder="https://example.com" value="{{ banner.link_url if banner else '' }}">
+            </div>
+            <div class="form-group checkbox">
+                <label>
+                    <input type="checkbox" name="is_active" {% if banner and banner.is_active or not banner %}checked{% endif %}>
+                    Активный баннер
+                </label>
+            </div>
+            <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+                <button type="submit" class="btn btn-primary">Сохранить</button>
+                <a href="{{ url_for('manage_banners') }}" class="btn btn-outline">Отмена</a>
+            </div>
+        </form>
+        {% if is_edit and banner %}
+            <form method="POST" action="{{ url_for('delete_banner', banner_id=banner.id) }}" style="margin-top: 1rem;" onsubmit="return confirm('Вы уверены, что хотите удалить этот баннер? Это действие нельзя отменить.');">
+                <button type="submit" class="btn btn-danger btn-small">Удалить баннер</button>
+            </form>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+

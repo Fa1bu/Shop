@@ -1,0 +1,160 @@
+{% extends "base.html" %}
+
+{% block title %}Мой аккаунт - Интернет-магазин{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>Мой аккаунт</h2>
+
+    <div class="account-grid">
+        <div class="account-card">
+            <h3>Профиль</h3>
+            <p><strong>Имя пользователя:</strong> {{ user.username }}</p>
+            <p><strong>Email:</strong> {{ user.email }}</p>
+            <p><strong>Роль:</strong>
+                {% if user_role == 'admin' %}
+                    Администратор
+                {% elif user_role == 'seller' %}
+                    Продавец
+                {% else %}
+                    Покупатель
+                {% endif %}
+            </p>
+            {% if user_role == 'buyer' %}
+                {% if seller_status == 'pending' %}
+                    <p class="text-muted">Заявка на статус продавца находится на рассмотрении.</p>
+                {% else %}
+                    <form method="POST" action="{{ url_for('request_seller_status') }}">
+                        <button type="submit" class="btn btn-primary btn-small">Стать продавцом</button>
+                    </form>
+                {% endif %}
+            {% elif user_role == 'seller' %}
+                <p class="text-success">Ваш аккаунт активен как продавец.</p>
+            {% elif user_role == 'admin' %}
+                <p class="text-success">Вы управляете магазином как администратор.</p>
+            {% endif %}
+        </div>
+
+        <div class="account-card">
+            <h3>Статистика</h3>
+            <p><strong>Товаров в корзине:</strong> {{ cart_count }}</p>
+            <p><strong>В избранном:</strong> {{ favorites_count }}</p>
+        </div>
+    </div>
+
+    {% if user_role in ['seller', 'admin'] and seller_products %}
+    <div class="account-card">
+        <h3>Мои товары</h3>
+        <div class="table-list">
+            {% for product in seller_products %}
+                <div class="table-row">
+                    <div>
+                        <strong><a href="{{ url_for('product', product_id=product.id) }}">{{ product.name }}</a></strong><br>
+                        <span class="text-muted">Цена: {{ "%.2f"|format(product.price) }} ₽</span>
+                    </div>
+                    <div class="table-actions">
+                        <a href="{{ url_for('edit_product', product_id=product.id) }}" class="btn btn-outline btn-small">Редактировать</a>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    {% if user_role in ['seller', 'admin'] and seller_orders %}
+    <div class="account-card">
+        <h3>Заказы на мои товары</h3>
+        <div class="orders-list">
+            {% for order in seller_orders %}
+                <div class="order-card">
+                    <div class="order-header">
+                        <div class="order-info">
+                            <h4>Заказ #{{ order.id }}</h4>
+                            <p class="order-detail"><strong>Покупатель:</strong> {{ order.buyer_username }}</p>
+                            <p class="order-detail"><strong>Имя:</strong> {{ order.customer_name }}</p>
+                            <p class="order-detail"><strong>Телефон:</strong> {{ order.customer_phone }}</p>
+                            <p class="order-detail"><strong>Адрес:</strong> {{ order.delivery_address }}</p>
+                            <p class="order-detail"><strong>Дата:</strong> {{ order.created_at }}</p>
+                            <p class="order-detail"><strong>Статус заказа:</strong> 
+                                <span class="badge badge-{{ order.status }}">
+                                    {{ order.status_label or order.status }}
+                                </span>
+                            </p>
+                            <p class="order-detail">
+                                <a href="{{ url_for('seller_order_details', order_id=order.id) }}" class="btn btn-outline btn-small">Посмотреть заказ</a>
+                            </p>
+                        </div>
+                        <div class="order-summary">
+                            <p class="order-total">{{ "%.2f"|format(order.total_amount) }} ₽</p>
+                            <span class="badge {% if order.all_confirmed %}badge-success{% else %}badge-warning{% endif %}">
+                                {% if order.all_confirmed %}Все подтверждены{% else %}Ожидает подтверждения{% endif %}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="order-items-section">
+                        <h5>Товары ({{ order['items']|length }}):</h5>
+                        {% for item in order['items'] %}
+                            <div class="order-item">
+                                <div class="order-item-info">
+                                    <div>
+                                        <strong>{{ item.product_name }}</strong><br>
+                                        <span class="order-item-details">
+                                            {{ "%.2f"|format(item.price) }} ₽ × {{ item.quantity }} шт. = {{ "%.2f"|format(item.price * item.quantity) }} ₽
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="order-item-status">
+                                    {% if item.seller_confirmed %}
+                                        <span class="text-success">✓ Подтвержден</span>
+                                        {% if item.confirmed_at %}
+                                            <br><span class="text-muted" style="font-size: 0.8rem;">{{ item.confirmed_at }}</span>
+                                        {% endif %}
+                                    {% else %}
+                                        <form method="POST" action="{{ url_for('confirm_order_item', order_id=order.id, order_item_id=item.id) }}" class="inline-form">
+                                            <button type="submit" class="btn btn-primary btn-small">Подтвердить</button>
+                                        </form>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% elif user_role in ['seller', 'admin'] %}
+    <div class="account-card">
+        <h3>Заказы на мои товары</h3>
+        <p class="text-muted">Пока нет заказов на ваши товары</p>
+    </div>
+    {% endif %}
+
+    <div class="account-card">
+        <h3>Последние отзывы</h3>
+        {% if reviews %}
+            <div class="reviews-list">
+                {% for review in reviews %}
+                    <div class="review-item">
+                        <div class="review-header">
+                            <div>
+                                <strong>{{ review.name }}</strong>
+                                <span class="review-rating">
+                                    {% for i in range(review.rating) %}⭐{% endfor %}
+                                </span>
+                            </div>
+                            <span class="review-date">{{ review.created_at }}</span>
+                        </div>
+                        {% if review.comment %}
+                            <p class="review-comment">{{ review.comment }}</p>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p>Вы ещё не оставляли отзывы.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+

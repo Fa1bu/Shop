@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+
+{% block title %}Главная - Интернет-магазин{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="category-buttons-row">
+        <div class="category-buttons">
+            <a href="{{ url_for('index') }}{% if search %}?search={{ search }}{% endif %}" 
+               class="category-btn {% if not selected_category %}active{% endif %}">
+                Все категории
+            </a>
+            {% for cat in category_choices %}
+                <a href="{{ url_for('index') }}?category={{ cat }}{% if search %}&search={{ search }}{% endif %}" 
+                   class="category-btn {% if selected_category == cat %}active{% endif %}">
+                    {{ cat|capitalize }}
+                </a>
+            {% endfor %}
+        </div>
+    </div>
+
+    {% if banners %}
+        <div class="banner-slider">
+            {% for banner in banners %}
+                <div class="banner-slide">
+                    {% if banner.link_url %}
+                        <a href="{{ banner.link_url }}">
+                            <img src="{{ image_url(banner.image_url) }}" alt="{{ banner.title }}">
+                        </a>
+                    {% else %}
+                        <img src="{{ image_url(banner.image_url) }}" alt="{{ banner.title }}">
+                    {% endif %}
+                    <div class="banner-slide-title">{{ banner.title }}</div>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <h2>Каталог товаров</h2>
+    
+    <div class="filters">
+        <form method="GET" action="{{ url_for('index') }}" class="filter-form">
+            <input type="text" name="search" placeholder="Поиск товаров..." value="{{ search }}" class="search-input">
+            <input type="hidden" name="category" value="{{ selected_category }}">
+            <button type="submit" class="btn btn-primary">Найти</button>
+        </form>
+    </div>
+
+    <div class="products-grid">
+        {% if products %}
+            {% for product in products %}
+                {% set category_label = (product.category or 'Разное')|capitalize %}
+                {% set stock_value = product.stock or 0 %}
+                <div class="product-card" data-url="{{ url_for('product', product_id=product.id) }}">
+                    <div class="product-card-header">
+                        <span class="product-badge">{{ category_label }}</span>
+                        {% set in_favorites = product.id in favorite_product_ids %}
+                        <form method="POST" action="{{ url_for('remove_from_favorites') if in_favorites else url_for('add_to_favorites') }}" class="card-interactive favorites-form" data-product-id="{{ product.id }}">
+                            <input type="hidden" name="product_id" value="{{ product.id }}">
+                            <button type="submit" class="favorite-toggle{% if in_favorites %} is-active{% endif %}" title="{{ 'Удалить из избранного' if in_favorites else 'Добавить в избранное' }}" aria-label="{{ 'Удалить из избранного' if in_favorites else 'Добавить в избранное' }}">
+                                {{ '❤' if in_favorites else '♡' }}
+                            </button>
+                        </form>
+                    </div>
+                    <div class="product-card-image">
+                        <img src="{{ image_url(product.image) }}" alt="{{ product.name }}">
+                    </div>
+                    <div class="product-card-body">
+                        <h3 class="product-name">
+                            <a href="{{ url_for('product', product_id=product.id) }}" class="card-interactive">{{ product.name }}</a>
+                        </h3>
+                        <p class="product-description">
+                            {{ product.description or 'Описание появится в ближайшее время' }}
+                        </p>
+                        <div class="product-meta">
+                            <div class="product-price">{{ "%.2f"|format(product.price) }} ₽</div>
+                            <div class="product-stock{% if stock_value <= 3 %} low-stock{% endif %}">
+                                {% if stock_value > 0 %}
+                                    В наличии: {{ stock_value }} шт.
+                                {% else %}
+                                    Предзаказ
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="product-card-footer">
+                            <form method="POST" action="{{ url_for('add_to_cart') }}" class="card-interactive cart-form" data-product-id="{{ product.id }}">
+                                <input type="hidden" name="product_id" value="{{ product.id }}">
+                                <input type="hidden" name="quantity" value="1">
+                                <button type="submit" class="btn btn-primary cart-pill">
+                                    <span>В корзину</span>
+                                </button>
+                            </form>
+                            <a href="{{ url_for('product', product_id=product.id) }}" class="btn btn-outline btn-small card-interactive">Подробнее</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="empty-state">
+                <p>Товары не найдены</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.product-card').forEach(function(card) {
+        card.addEventListener('click', function() {
+            var url = card.getAttribute('data-url');
+            if (url) {
+                window.location.href = url;
+            }
+        });
+    });
+    document.querySelectorAll('.card-interactive').forEach(function(element) {
+        element.addEventListener('click', function(event) {
+            event.stopPropagation();
+        });
+    });
+    
+    // Сохраняем позицию скролла перед отправкой формы
+    document.querySelectorAll('.cart-form, .favorites-form').forEach(function(form) {
+        form.addEventListener('submit', function(event) {
+            // Сохраняем текущую позицию скролла
+            sessionStorage.setItem('scrollPosition', window.pageYOffset || document.documentElement.scrollTop);
+        });
+    });
+    
+    // Восстанавливаем позицию скролла после загрузки страницы
+    var savedScrollPosition = sessionStorage.getItem('scrollPosition');
+    if (savedScrollPosition !== null) {
+        sessionStorage.removeItem('scrollPosition');
+        window.scrollTo(0, parseInt(savedScrollPosition));
+    }
+});
+</script>
+{% endblock %}
+
