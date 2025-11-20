@@ -3,47 +3,28 @@
 Небольшой учебный интернет-магазин на Flask с каталогом товаров, корзиной, избранным и системой заказов. Приложение использует SQLite и хранит изображения в `static/uploads`.
 
 ## Возможности
-- Главная страница с баннерами, поиском и фильтрацией по категориям
-- Карточки товаров с быстрым добавлением в корзину и избранное
+- Главная страница с баннерами, карточками товара, поиском и фильтрацией по категориям
+<div align="center"> <img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/7e4835d1-e6e7-48e4-9db0-fc606d18a99e" /> </div> <br>
+- Карточка товара
+<div align="center"> <img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/64e3f4d2-cfda-4d0a-a0a6-762e45c86353" /> </div> <br>
 - Личный кабинет покупателя, история заказов и визуальный трекер этапов
+<div align="center"> <img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/c79c951f-3506-4579-98b8-7ab5cac40afe" /> </div> <br>
 - Управление товарами/баннерами для продавцов и админа
+<div align="center"> <img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/6b747c41-b599-4e34-a07b-6c4e14cb50e6" /> </div> <br>
+<div align="center"> <img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/5eccb846-53eb-48ff-b6bc-7382e2245c5a" /> </div> <br>
 - Избранное и гостевая корзина, которые переносятся после авторизации
-- Хранение изображений продуктов и баннеров через встроенные формы загрузки
+<div align="center"> <img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/1122e57c-6bab-4002-bbf6-cfaf51e01932" /> </div> <br>
+<div align="center"> <img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/501ffe19-2e75-4b2b-888f-eaa1a8100fba" /> </div> <br>
 
-## Требования
-- Python 3.11+
-- Установленные системные зависимости для сборки пакетов Pillow (если понадобится обрабатывать изображения)
+### Что необходимо для работы: 
+1. Установить Python https://www.python.org/downloads/
+2. Установить на компьютер микрофреймворк (Flask) для Python. Для этого открываем командную строку и прописываем ```pip install Flask```
 
-## Быстрый старт
-```bash
-git clone <repo-url>
-cd flask-store
-python -m venv .venv
-.venv\Scripts\activate          # Windows
-pip install -r requirements.txt
-python app.py
-```
-Приложение запустится на `http://127.0.0.1:5000/`. При первом старте автоматически создаётся база `store.db`. Первый зарегистрировавшийся пользователь получает роль администратора.
+### Установка и запуск
+1. Сохранить репозиторий
+2. Запустить файл app.py
+3. Зайти на сайт
 
-## Переменные окружения
-- `FLASK_ENV` — режим разработки (по умолчанию `development`)
-- `SECRET_KEY` — замените значение `app.secret_key` в `app.py` на переменную окружения перед деплоем
-- `DATABASE` — путь до файла БД, по умолчанию `store.db` в корне проекта
-
-## Структура
-```
-app.py                 # Flask-приложение и маршруты
-templates/             # HTML-шаблоны Jinja2
-static/style.css       # Основные стили
-static/uploads/        # Загрузки баннеров и товаров
-requirements.txt       # Python-зависимости
-store.db               # SQLite база данных (создаётся автоматически)
-```
-
-## Советы по разработке
-- Перед коммитом запускайте `python app.py` и проверяйте ключевые пользовательские сценарии
-- Храните медиа-файлы в `static/uploads/*`, папки создаются автоматически
-- При изменении схемы БД обновите функции миграции в `init_db()`
-- Для удобной работы с заказами изучите вспомогательные функции `get_order_status_timeline` и `ORDER_STATUS_FLOW`
-
-
+### Использование
+1. Войдите в систему
+2. Откройте главную страницу
